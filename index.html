@@ -2,110 +2,402 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Konzole - Command Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konzole - System Access</title>
     <style>
         /* CSS for the old-style, 4chan-like console look */
         body {
             background-color: #333; /* Dark grey background */
-            color: #cc0000; /* Dominant red text color, for a stark, old-web feel */
+            color: #cc0000; /* Dominant red text color */
             font-family: 'Courier New', Courier, monospace; /* Monospace font for console effect */
             margin: 0;
             padding: 20px;
             font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        /* Main content area, similar to a thread/post container */
+        /* Main content area */
         .console-container {
-            width: 80%; /* Limit width for a focused, older screen feel */
-            max-width: 900px;
+            width: 90%;
+            max-width: 600px;
             margin: 0 auto;
-            border: 1px solid #cc0000; /* Red border */
-            padding: 10px;
+            border: 2px solid #cc0000; /* Red border */
+            padding: 15px;
             background-color: #1a1a1a; /* Very dark inner background */
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); /* Glowing red shadow */
+            transition: all 0.3s ease;
         }
 
         /* Header for the console/page title */
         h1 {
             color: #ff3333; /* Brighter red for emphasis */
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 15px;
-            border-bottom: 1px dashed #660000; /* Dashed separator line */
+            border-bottom: 2px dashed #660000; /* Dashed separator line */
             padding-bottom: 5px;
             text-transform: uppercase;
+            text-align: center;
         }
 
         /* Output area (simulating console messages) */
         .output {
-            min-height: 200px;
+            min-height: 100px;
             margin-bottom: 15px;
-            white-space: pre-wrap; /* Preserve formatting for console output */
-            border-bottom: 1px dashed #660000;
-            padding-bottom: 10px;
-            overflow-y: auto; /* Scroll for longer output */
-            max-height: 40vh;
+            white-space: pre-wrap;
+            border: 1px solid #660000;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 200px;
+            background-color: #0d0d0d;
         }
 
-        /* Command executor label and input styling */
-        .executor-label {
+        /* Input and Label Styling */
+        .executor-label, label {
             font-weight: bold;
-            display: block; /* Make it take up its own line */
+            display: block;
             margin-top: 10px;
             margin-bottom: 5px;
             color: #cc0000;
         }
 
-        #command-input {
-            width: calc(100% - 12px); /* Full width minus padding/border */
-            padding: 5px;
+        input[type="text"], input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 8px;
             border: 1px solid #ff3333;
-            background-color: #0d0d0d; /* Very dark input background */
+            background-color: #0d0d0d;
             color: #cc0000;
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ff3333;
         }
 
-        /* Placeholder for a success/info message style */
-        .info {
-            color: #990000; /* Darker red for less important info */
-            margin-bottom: 5px;
+        /* Buttons */
+        .btn-console {
+            background-color: #cc0000;
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
         }
 
-        /* Links should also be red */
-        a {
-            color: #ff3333;
-            text-decoration: none;
+        .btn-console:hover {
+            background-color: #ff3333;
+            color: #fff;
+        }
+        
+        /* Message Box */
+        #message-box {
+            min-height: 30px;
+            padding: 5px;
+            margin-top: 15px;
+            border: 1px dashed #ff6666;
+            color: #ff6666;
+            background-color: #0d0d0d;
+            text-align: center;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .hidden {
+            display: none !important;
         }
-
     </style>
 </head>
 <body>
 
     <div class="console-container">
-        <h1>Konzole - System Access</h1>
+        <h1 id="main-title">Konzole - Authentication Required</h1>
 
-        <div class="info">
-            [STATUS]: Welcome to the command interface.
-            <br>
-            [NOTICE]: All commands are logged. Use responsibly.
+        <!-- Authentication View -->
+        <div id="auth-view">
+            <div id="login-form">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" placeholder="Enter username">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" placeholder="Enter password">
+                <button class="btn-console" onclick="handleLogin()">Login</button>
+                <button class="btn-console" onclick="setView('register')">Register New Account</button>
+            </div>
+
+            <div id="register-form" class="hidden">
+                <label for="reg-username">New Username:</label>
+                <input type="text" id="reg-username" placeholder="Choose a username">
+                <label for="reg-password">New Password:</label>
+                <input type="password" id="reg-password" placeholder="Choose a password">
+                <label for="reg-code">Access Code:</label>
+                <input type="password" id="reg-code" placeholder="Enter FENNKING29">
+                <button class="btn-console" onclick="handleRegister()">Create Account</button>
+                <button class="btn-console" onclick="setView('login')">Back to Login</button>
+            </div>
+        </div>
+        
+        <!-- Main Console View -->
+        <div id="console-view" class="hidden">
+            <h1 id="console-header">Konzole - System Access</h1>
+
+            <div class="output" id="console-output">
+                <!-- Log messages will appear here -->
+            </div>
+
+            <label for="command-input" class="executor-label">
+                &gt;&gt;&gt; Command Executor:
+            </label>
+            <input type="text" id="command-input" placeholder="Type command...">
+            <button class="btn-console" onclick="handleCommand()">Execute</button>
+            <button class="btn-console" onclick="handleLogout()">Logout</button>
         </div>
 
-        <div class="output" id="console-output">
-            > Type 'help' for a list of available commands.
-        </div>
-
-        <label for="command-input" class="executor-label">
-            &gt;&gt;&gt; Command Executor:
-        </label>
-        <input type="text" id="command-input" placeholder="Enter command here...">
-
-        <div class="info" style="margin-top: 15px;">
-            [DEBUG]: Current session ID is <a href="#">A1B2C3D4</a>.
-        </div>
+        <!-- Status/Error Message Box -->
+        <div id="message-box">[SYSTEM]: Please log in or register.</div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- MANDATORY FIREBASE SETUP ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let app, db, auth, userId = 'anonymous';
+        let currentUser = null;
+        
+        // Hardcoded registration code as requested
+        const ACCESS_CODE = 'FENNKING29';
+        
+        // Collection path for user storage (Public data specific to this app)
+        const USERS_COLLECTION_PATH = `/artifacts/${appId}/public/data/konzole_users`;
+
+        // Utility to display messages
+        function showMessage(msg, isError = false) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = isError ? `[ERROR]: ${msg}` : `[SYSTEM]: ${msg}`;
+            messageBox.style.color = isError ? '#ff6666' : '#ff9999';
+            messageBox.style.borderColor = isError ? '#ff3333' : '#660000';
+            console.log(isError ? `[ERROR] ${msg}` : `[SYSTEM] ${msg}`);
+        }
+
+        // Utility to update the console log output
+        function logToConsole(message) {
+            const output = document.getElementById('console-output');
+            const now = new Date().toLocaleTimeString();
+            output.innerHTML += `[${now}] ${message}<br>`;
+            // Auto-scroll to the bottom
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // Function to switch between login and register forms
+        window.setView = (view) => {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            if (view === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                document.getElementById('main-title').textContent = 'Konzole - Authentication Required';
+            } else if (view === 'register') {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                document.getElementById('main-title').textContent = 'Konzole - New Account Registration';
+            }
+            showMessage(`Switched to ${view} view.`);
+        }
+
+        // Function to switch to the main console view
+        function switchToConsoleView(username) {
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById('console-view').classList.remove('hidden');
+            document.getElementById('main-title').textContent = `Konzole - Welcome, ${username}`;
+            logToConsole(`&gt; System Access Granted for user: ${username}`);
+            logToConsole("&gt; Ready for input. Type 'LOGOUT' to exit session.");
+            // Clear inputs
+            document.getElementById('command-input').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-username').value = '';
+        }
+        
+        // --- AUTH HANDLERS ---
+        
+        window.handleRegister = async () => {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const code = document.getElementById('reg-code').value.trim();
+
+            if (!username || !password || !code) {
+                showMessage("All fields are required for registration.", true);
+                return;
+            }
+
+            if (code !== ACCESS_CODE) {
+                showMessage("Invalid access code.", true);
+                return;
+            }
+
+            // 1. Check if username already exists
+            const usersRef = collection(db, USERS_COLLECTION_PATH);
+            const q = query(usersRef, where("username", "==", username));
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    showMessage(`User '${username}' already exists.`, true);
+                    return;
+                }
+                
+                // 2. Create the new user document
+                // NOTE: Storing passwords in plain text is highly insecure. 
+                // This is done here for a simple single-file demo.
+                const newUserRef = doc(usersRef); // Firestore generates a unique ID
+                await setDoc(newUserRef, {
+                    username: username,
+                    password: password, // WARNING: INSECURE
+                    created: new Date().toISOString()
+                });
+                
+                showMessage(`Account '${username}' created successfully. Proceed to login.`);
+                setView('login');
+            } catch (error) {
+                showMessage(`Registration failed: ${error.message}`, true);
+                console.error("Registration Error:", error);
+            }
+        };
+
+        window.handleLogin = async () => {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                showMessage("Please enter both username and password.", true);
+                return;
+            }
+
+            const usersRef = collection(db, USERS_COLLECTION_PATH);
+            const q = query(usersRef, where("username", "==", username));
+
+            try {
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    showMessage("Login failed: User not found.", true);
+                    return;
+                }
+
+                // Get the user document (should only be one since username is unique)
+                const userData = querySnapshot.docs[0].data();
+
+                if (userData.password === password) {
+                    currentUser = userData;
+                    showMessage(`Login successful. Welcome back, ${username}.`);
+                    switchToConsoleView(username);
+                } else {
+                    showMessage("Login failed: Incorrect password.", true);
+                }
+
+            } catch (error) {
+                showMessage(`Login failed: ${error.message}`, true);
+                console.error("Login Error:", error);
+            }
+        };
+        
+        window.handleLogout = () => {
+            currentUser = null;
+            document.getElementById('auth-view').classList.remove('hidden');
+            document.getElementById('console-view').classList.add('hidden');
+            setView('login');
+            logToConsole("&gt; Session terminated. Please login again.");
+        };
+        
+        window.handleCommand = () => {
+            const inputElement = document.getElementById('command-input');
+            const command = inputElement.value.trim();
+            inputElement.value = ''; // Clear input
+
+            if (!command) return;
+
+            // Log user command
+            logToConsole(`&lt; ${currentUser.username}: ${command}`);
+            
+            // Simple command execution logic
+            const lowerCommand = command.toLowerCase();
+
+            if (lowerCommand === 'logout') {
+                handleLogout();
+                return;
+            }
+
+            if (lowerCommand === 'clear') {
+                document.getElementById('console-output').innerHTML = '';
+                logToConsole("Console screen cleared.");
+                return;
+            }
+            
+            // Default response
+            logToConsole(`&gt; Command not recognized: ${command}.`);
+        };
+
+
+        // --- FIREBASE INITIALIZATION ---
+        window.onload = async () => {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // 1. Authenticate with Canvas token or anonymously
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // 2. Wait for auth state change to confirm userId
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        showMessage(`System initialized. User ID: ${userId.substring(0, 8)}...`);
+                    } else {
+                        userId = 'anonymous';
+                        showMessage("System initialized. Anonymous session established.");
+                    }
+                    // Initial view load
+                    setView('login');
+                });
+
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+                showMessage(`Initialization Failed: Check console for details.`, true);
+            }
+        };
+
+        // Allows using Enter key for command input
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('console-view').classList.contains('hidden') === false) {
+                    // Only execute command if console is visible
+                    handleCommand();
+                } else if (document.getElementById('login-form').classList.contains('hidden') === false) {
+                    // Try to log in if on login screen
+                    handleLogin();
+                } else if (document.getElementById('register-form').classList.contains('hidden') === false) {
+                    // Try to register if on register screen
+                    handleRegister();
+                }
+            }
+        });
+        
+    </script>
 </body>
 </html>
