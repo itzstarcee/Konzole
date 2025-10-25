@@ -1,344 +1,111 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foro Comunitario Estilo Clásico</title>
+    <title>Konzole - Command Console</title>
     <style>
-        /* --- ESTILOS CLÁSICOS AZUL OSCURO --- */
-        :root {
-            --bg-color: #121212; /* Fondo muy oscuro */
-            --text-color: #e0e0e0; /* Texto claro */
-            --header-bg: #0a1931; /* Azul marino oscuro para encabezados */
-            --border-color: #2a4058; /* Borde azul oscuro/grisáceo */
-            --link-color: #4da6ff; /* Azul brillante para enlaces/interactivos */
-            --private-bg: #3d2a2a; /* Fondo más oscuro y rojizo para privado */
+        /* CSS for the old-style, 4chan-like console look */
+        body {
+            background-color: #333; /* Dark grey background */
+            color: #cc0000; /* Dominant red text color, for a stark, old-web feel */
+            font-family: 'Courier New', Courier, monospace; /* Monospace font for console effect */
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
         }
 
-        body { 
-            font-family: 'Courier New', Courier, monospace; /* Fuente más "vieja" */
-            margin: 0; 
-            padding: 0;
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
+        /* Main content area, similar to a thread/post container */
+        .console-container {
+            width: 80%; /* Limit width for a focused, older screen feel */
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid #cc0000; /* Red border */
+            padding: 10px;
+            background-color: #1a1a1a; /* Very dark inner background */
         }
 
-        header { 
-            text-align: center; 
-            padding: 15px; 
-            background-color: var(--header-bg); 
-            color: white; 
-            border-bottom: 3px solid var(--link-color);
+        /* Header for the console/page title */
+        h1 {
+            color: #ff3333; /* Brighter red for emphasis */
+            font-size: 24px;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #660000; /* Dashed separator line */
+            padding-bottom: 5px;
+            text-transform: uppercase;
         }
 
-        .forum-container { 
-            display: flex; 
-            max-width: 1200px; 
-            margin: 20px auto; 
-            padding: 0 10px;
-        }
-
-        #forum-list { 
-            width: 25%; 
-            padding: 15px; 
-            background-color: #1c2a3b; /* Fondo de la barra lateral */
-            border: 1px solid var(--border-color);
-            border-radius: 0; /* Bordes más rectos */
-        }
-
-        #main-content { 
-            width: 75%; 
-            padding: 20px; 
-            background-color: #181f2a; /* Fondo principal ligeramente más claro que el body */
-            border: 1px solid var(--border-color);
-            border-radius: 0; 
-            margin-left: 20px; 
-            box-shadow: none; /* Sin sombra para look plano/viejo */
-        }
-
-        .forum-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            border-bottom: 1px dashed var(--border-color);
+        /* Output area (simulating console messages) */
+        .output {
+            min-height: 200px;
+            margin-bottom: 15px;
+            white-space: pre-wrap; /* Preserve formatting for console output */
+            border-bottom: 1px dashed #660000;
             padding-bottom: 10px;
+            overflow-y: auto; /* Scroll for longer output */
+            max-height: 40vh;
         }
 
-        h2, h3 { color: var(--link-color); }
-
-        .message { 
-            border: 1px solid var(--border-color); 
-            padding: 12px; 
-            margin-bottom: 12px; 
-            border-radius: 0; /* Bordes rectos */
-            background-color: #121721; /* Fondo del mensaje */
+        /* Command executor label and input styling */
+        .executor-label {
+            font-weight: bold;
+            display: block; /* Make it take up its own line */
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #cc0000;
         }
-        .message strong { color: #98d4ff; } /* Nombre de usuario ligeramente más claro */
-        .message p { margin: 5px 0 0 0; }
 
-        .delete-btn { 
-            position: absolute; 
-            top: 8px; 
-            right: 8px; 
-            background: none; 
-            border: 1px solid #880000; 
-            color: #ff4d4d; 
-            cursor: pointer; 
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 0;
+        #command-input {
+            width: calc(100% - 12px); /* Full width minus padding/border */
+            padding: 5px;
+            border: 1px solid #ff3333;
+            background-color: #0d0d0d; /* Very dark input background */
+            color: #cc0000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
         }
-        .delete-btn:hover { background-color: #880000; color: white; }
 
+        /* Placeholder for a success/info message style */
+        .info {
+            color: #990000; /* Darker red for less important info */
+            margin-bottom: 5px;
+        }
 
-        input[type="text"], textarea { 
-            width: 100%; 
-            padding: 10px; 
-            margin-bottom: 10px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 0; 
-            box-sizing: border-box;
-            background-color: #1c2a3b;
-            color: var(--text-color);
+        /* Links should also be red */
+        a {
+            color: #ff3333;
+            text-decoration: none;
         }
-        
-        button { 
-            padding: 10px 15px; 
-            background-color: var(--link-color); 
-            color: var(--bg-color); /* Texto oscuro sobre el botón azul */
-            border: none; 
-            border-radius: 0; 
-            cursor: pointer; 
-            transition: background-color 0.2s;
-        }
-        button:hover { background-color: #6fbaff; }
 
-        .private-forum { 
-            background-color: var(--private-bg); 
-            border-left: 3px solid #a00000; 
+        a:hover {
+            text-decoration: underline;
         }
-        .forum-item { 
-            cursor: pointer; 
-            padding: 8px; 
-            margin-bottom: 3px; 
-            border-bottom: 1px dotted var(--border-color);
-        }
-        .forum-item:hover { background-color: #253852; }
 
-
-        /* Modal Estilos */
-        #create-forum-modal {
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            background: var(--header-bg); 
-            padding: 25px; 
-            border: 2px solid var(--link-color); 
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(77, 166, 255, 0.5);
-        }
-        #create-forum-modal input, #create-forum-modal button { border-radius: 0; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>//: SISTEMA DE COMUNICACIÓN [V1.0]</h1>
-    </header>
+    <div class="console-container">
+        <h1>Konzole - System Access</h1>
 
-    <div class="forum-container">
-        
-        <div id="forum-list">
-            <h2>[MENÚ DE NAVEGACIÓN]</h2>
-            <button onclick="showCreateForum()" style="margin-bottom: 15px; width: 100%;">::: NUEVO FORO :::</button>
-            <div id="forums">
-                </div>
+        <div class="info">
+            [STATUS]: Welcome to the command interface.
+            <br>
+            [NOTICE]: All commands are logged. Use responsibly.
         </div>
 
-        <div id="main-content">
-            <div class="forum-header">
-                <h2 id="current-forum-title">>>> INICIALIZANDO SISTEMA...</h2>
-                <span id="forum-type" style="color: var(--link-color);"></span>
-            </div>
-            
-            <div id="message-form" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
-                <h3>[ENVIAR_DATO]</h3>
-                <input type="text" id="username" placeholder="IDENTIFICACIÓN DE USUARIO" required>
-                <textarea id="message-text" placeholder="MENSAJE DEL SISTEMA/USUARIO..." rows="4" required></textarea>
-                <button onclick="sendMessage()">> TRANSMITIR MENSAJE ></button>
-            </div>
-
-            <h3>[REGISTRO_DE_INTERCAMBIO]</h3>
-            <div id="messages-container">
-                </div>
+        <div class="output" id="console-output">
+            > Type 'help' for a list of available commands.
         </div>
-    </div>
 
-    <div id="create-forum-modal" style="display:none;">
-        <h3>[CMD: CREAR_FORO]</h3>
-        <input type="text" id="new-forum-title" placeholder="TITULO DEL SUB-SISTEMA" required>
-        <label>
-            <input type="checkbox" id="is-private"> [FLAG] Acceso Restringido (Contraseña)
+        <label for="command-input" class="executor-label">
+            &gt;&gt;&gt; Command Executor:
         </label>
-        <input type="password" id="private-password" placeholder="CLAVE DE ACCESO" style="display:none;">
-        <button onclick="createForum()" style="margin-top: 10px;">EJECUTAR</button>
-        <button onclick="document.getElementById('create-forum-modal').style.display='none'">CANCELAR</button>
+        <input type="text" id="command-input" placeholder="Enter command here...">
+
+        <div class="info" style="margin-top: 15px;">
+            [DEBUG]: Current session ID is <a href="#">A1B2C3D4</a>.
+        </div>
     </div>
-
-    <script>
-        // Funcionalidad de JavaScript (simulación sin servidor)
-        
-        let currentForumId = null;
-        
-        // Carga los foros desde localStorage o usa un valor por defecto
-        let forums = JSON.parse(localStorage.getItem('forums')) || [
-            { id: 1, title: ":: AVISOS GENERALES (PÚBLICO) ::", isPrivate: false, messages: [{ id: 'init1', username: 'SYSTEM', timestamp: '00:00:00', text: 'Bienvenido al Sub-Sistema. Use la función "Crear Nuevo Foro" para iniciar una nueva discusión.' }] },
-            { id: 2, title: ">> DEPURACIÓN DE CÓDIGO (PÚBLICO) <<", isPrivate: false, messages: [] },
-            { id: 3, title: "/// CONSOLA CENTRAL (PRIVADO) ///", isPrivate: true, password: "admin", messages: [{ id: 'init2', username: 'ADMIN', timestamp: '00:00:00', text: 'Zona segura. Requerida clave de acceso.' }] }
-        ];
-
-        function saveForums() {
-            localStorage.setItem('forums', JSON.stringify(forums));
-        }
-
-        function renderForums() {
-            const list = document.getElementById('forums');
-            list.innerHTML = '';
-            forums.forEach(forum => {
-                const div = document.createElement('div');
-                div.className = 'forum-item' + (forum.isPrivate ? ' private-forum' : '');
-                div.textContent = forum.title;
-                div.onclick = () => selectForum(forum.id);
-                list.appendChild(div);
-            });
-        }
-        
-        function selectForum(id) {
-            const forum = forums.find(f => f.id === id);
-            
-            if (forum.isPrivate) {
-                const password = prompt("INGRESE CLAVE DE ACCESO PARA: " + forum.title + ":");
-                if (password !== forum.password) {
-                    alert("ERROR DE AUTORIZACIÓN: Clave inválida.");
-                    return;
-                }
-            }
-            
-            currentForumId = id;
-            document.getElementById('current-forum-title').textContent = ":: " + forum.title + " ::";
-            document.getElementById('forum-type').textContent = forum.isPrivate ? '[ACCESO RESTRINGIDO]' : '[ACCESO PÚBLICO]';
-            renderMessages();
-        }
-
-        function renderMessages() {
-            if (!currentForumId) return;
-
-            const forum = forums.find(f => f.id === currentForumId);
-            const container = document.getElementById('messages-container');
-            container.innerHTML = '';
-
-            forum.messages.forEach(msg => {
-                const div = document.createElement('div');
-                div.className = 'message';
-                div.innerHTML = `
-                    [${msg.timestamp}] <strong style="color: var(--link-color);">[${msg.username}]</strong>:
-                    <p>${msg.text}</p>
-                    <button class="delete-btn" onclick="deleteMessage(${forum.id}, '${msg.id}')">X</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function sendMessage() {
-            if (!currentForumId) {
-                alert("ADVERTENCIA: DEBE SELECCIONAR UN SUB-SISTEMA (FORO).");
-                return;
-            }
-            
-            const username = document.getElementById('username').value.trim() || "USUARIO_ANONIMO";
-            const text = document.getElementById('message-text').value.trim();
-
-            if (!text) {
-                alert("ERROR: CAMPO DE MENSAJE VACÍO.");
-                return;
-            }
-            
-            const forum = forums.find(f => f.id === currentForumId);
-            const newMessage = {
-                id: Date.now().toString(), // ID único simple
-                username: username,
-                text: text,
-                timestamp: new Date().toLocaleTimeString('en-US', {hour12: false}) // Formato HH:MM:SS
-            };
-
-            forum.messages.push(newMessage);
-            saveForums();
-            document.getElementById('message-text').value = ''; // Limpiar textarea
-            renderMessages();
-        }
-        
-        function deleteMessage(forumId, messageId) {
-            if (!confirm("CONFIRMAR ELIMINACIÓN DE REGISTRO.")) return;
-            
-            const forum = forums.find(f => f.id === forumId);
-            forum.messages = forum.messages.filter(msg => msg.id !== messageId);
-            saveForums();
-            renderMessages();
-        }
-
-        function showCreateForum() {
-            document.getElementById('create-forum-modal').style.display = 'block';
-            document.getElementById('is-private').onchange = (e) => {
-                const passwordField = document.getElementById('private-password');
-                passwordField.style.display = e.target.checked ? 'block' : 'none';
-                passwordField.required = e.target.checked;
-            };
-        }
-
-        function createForum() {
-            const title = document.getElementById('new-forum-title').value.trim();
-            const isPrivate = document.getElementById('is-private').checked;
-            const password = document.getElementById('private-password').value.trim();
-
-            if (!title) {
-                alert("ERROR: TITULO DEL SUB-SISTEMA REQUERIDO.");
-                return;
-            }
-
-            if (isPrivate && !password) {
-                alert("ERROR: ACCESO RESTRINGIDO REQUIERE CLAVE.");
-                return;
-            }
-
-            const newForum = {
-                id: Date.now(),
-                title: title.toUpperCase(),
-                isPrivate: isPrivate,
-                password: isPrivate ? password : null,
-                messages: [{ id: 'new', username: 'SYSTEM', timestamp: new Date().toLocaleTimeString('en-US', {hour12: false}), text: `Sub-Sistema ${title.toUpperCase()} CREADO. Acceso: ${isPrivate ? 'PRIVADO' : 'PÚBLICO'}.` }]
-            };
-
-            forums.push(newForum);
-            saveForums();
-            renderForums();
-            document.getElementById('create-forum-modal').style.display = 'none';
-            // Limpiar campos
-            document.getElementById('new-forum-title').value = '';
-            document.getElementById('is-private').checked = false;
-            document.getElementById('private-password').style.display = 'none';
-            document.getElementById('private-password').value = '';
-        }
-
-        // Inicializar
-        renderForums();
-        // Selecciona el primer foro automáticamente si existe para ver contenido inicial
-        if (forums.length > 0) {
-            selectForum(forums[0].id);
-        }
-        
-    </script>
 
 </body>
 </html>
